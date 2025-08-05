@@ -8,8 +8,10 @@ from aiogram.filters import Command
 import logging
 import os
 from dotenv import load_dotenv
+from db import load_db
 
 load_dotenv()
+load_db()
 
 TOKEN = os.getenv('TOKEN')
 
