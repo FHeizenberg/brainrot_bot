@@ -1,18 +1,27 @@
 import pickle
 import sqlite3
 
-# Загрузка данных
-with open('masculine_brainrots.pkl', 'rb') as file:
-    data = pickle.load(file)
-print(data)
 
-# Подключение к базе данных
-conn = sqlite3.connect('my_database.db')
-cursor = conn.cursor()
+def load_db():
+  # with open('feminine_brainrots.pkl', 'rb') as file:
+  with open('masculine_brainrots.pkl', 'rb') as file:
+      data = pickle.load(file)
 
-cursor.execute('''CREATE TABLE IF NOT EXISTS users
+  conn = sqlite3.connect('my_database.db')
+  cursor = conn.cursor()
+
+  cursor.execute('''CREATE TABLE IF NOT EXISTS users
                   (id INTEGER UNIQUE, iq INTEGER, rot_count INTEGER, pic_count INTEGER)''')
 
+  cursor.execute('''CREATE TABLE IF NOT EXISTS verbs (id INTEGER PRIMARY KEY AUTOINCREMENT, verb TEXT NOT NULL);''')
 
-conn.commit()
-conn.close()
+  cursor.execute('SELECT COUNT(*) FROM verbs')
+  count = cursor.fetchone()[0]
+
+  if count == 0:
+    cursor.executemany('''INSERT INTO verbs (verb) VALUES (?)''', [(v,) for v in data])
+    print("db created")
+
+  conn.commit()
+  conn.close()
+
